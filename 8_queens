@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Size of the chessboard
+const int N = 8;
+
+// Function to print the board
+void printBoard(const vector<vector<int>>& board) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cout << board[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+// Function to check if a queen can be placed at board[row][col]
+bool isSafe(const vector<vector<int>>& board, int row, int col) {
+    // Check the row on the left side
+    for (int i = 0; i < col; i++) {
+        if (board[row][i] == 1) return false;
+    }
+
+    // Check the upper diagonal on the left side
+    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+        if (board[i][j] == 1) return false;
+    }
+
+    // Check the lower diagonal on the left side
+    for (int i = row, j = col; i < N && j >= 0; i++, j--) {
+        if (board[i][j] == 1) return false;
+    }
+
+    return true;
+}
+
+// Recursive function to solve the 8-Queens problem
+bool solveNQueens(vector<vector<int>>& board, int col) {
+    // Base case: if all queens are placed
+    if (col >= N) return true;
+
+    // Consider each row in the current column
+    for (int i = 0; i < N; i++) {
+        // Check if the queen can be placed at board[i][col]
+        if (isSafe(board, i, col)) {
+            // Place the queen
+            board[i][col] = 1;
+
+            // Recur to place the rest of the queens
+            if (solveNQueens(board, col + 1)) return true;
+
+            // If placing queen in board[i][col] doesn't lead to a solution, backtrack
+            board[i][col] = 0;
+        }
+    }
+
+    // If the queen can't be placed in any row in this column, return false
+    return false;
+}
+
+int main() {
+    // Initialize the board with all cells set to 0
+    vector<vector<int>> board(N, vector<int>(N, 0));
+
+    // Place the first queen manually (e.g., in the first row, first column)
+    board[0][0] = 1;
+
+    // Solve the remaining queens starting from the second column
+    if (solveNQueens(board, 1)) {
+        cout << "Solution for 8-Queens problem:\n";
+        printBoard(board);
+    } else {
+        cout << "No solution exists for the 8-Queens problem.\n";
+    }
+
+    return 0;
+}
