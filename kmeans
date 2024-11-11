@@ -1,0 +1,31 @@
+odf=df.drop(['ADDRESSLINE1','ADDRESSLINE2','STATE','TERRITORY','POSTALCODE'],axis=1)
+
+X=odf[['QUANTITYORDERED','SALES']]
+
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+wcss=[]
+for i in range(1,11):
+  kmeans=KMeans(n_clusters=i,random_state=42)
+  kmeans.fit(X)
+  wcss.append(kmeans.inertia_)
+
+plt.plot(range(1,11),wcss)
+plt.title('sales')
+plt.xlable('number of cluster')
+plt.ylable('wcss')
+
+optimal_k=3
+kmeans=KMeans(n_clusters=optimal_k,random_state=42
+odf['cluster']=kmeans.fit_predict(X)
+centeroids=kmeans.cluster_centers_
+print(odf[['SALES','QUANTITYORDERED','cluster']])
+
+import seaborn as sns
+
+sns.scatterplot(x='SALES',y='QUANTITYORDERED',hue='cluster',data=odf)
+plt.scatter(centeroids[:,1],centeroids[:,0],marker='*',s=200,linewidth=3,color='r')
+plt.xlabel('sales')
+plt.ylabel('quantity')
+plt.title('sales data')
